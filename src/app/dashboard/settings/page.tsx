@@ -66,13 +66,13 @@ export default function SettingsPage() {
             });
 
             if (res.ok) {
-                toast.success("System settings updated. Refresh to see changes.");
+                toast.success("Configurações do sistema atualizadas. Atualize a página para ver as mudanças.");
             } else {
-                toast.error("Failed to update system settings");
+                toast.error("Falha ao atualizar configurações do sistema");
             }
         } catch (e) {
             console.error(e);
-            toast.error("Error saving system settings");
+            toast.error("Erro ao salvar configurações do sistema");
         } finally {
             setSystemLoading(false);
         }
@@ -83,8 +83,8 @@ export default function SettingsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-xl sm:text-3xl font-bold tracking-tight">Settings</h2>
-                <p className="text-muted-foreground text-sm mt-1">Global system configuration. Only SuperAdmins can make changes.</p>
+                <h2 className="text-xl sm:text-3xl font-bold tracking-tight">Configurações</h2>
+                <p className="text-muted-foreground text-sm mt-1">Configuração global do sistema. Somente SuperAdmins podem fazer alterações.</p>
             </div>
 
             {!isSuperAdmin && (
@@ -93,9 +93,9 @@ export default function SettingsPage() {
                         <div className="flex items-start gap-3">
                             <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
                             <div>
-                                <p className="text-sm font-medium text-yellow-900">View Only Mode</p>
+                                <p className="text-sm font-medium text-yellow-900">Modo Somente Visualização</p>
                                 <p className="text-xs text-yellow-700 mt-1">
-                                    Only Superadmins can modify system settings. You can view current settings but cannot make changes.
+                                    Somente Superadmins podem modificar as configurações do sistema. Você pode visualizar as configurações atuais, mas não pode fazer alterações.
                                 </p>
                             </div>
                         </div>
@@ -106,13 +106,13 @@ export default function SettingsPage() {
             {/* System Configuration (Global) */}
             <Card className="border-primary/20 bg-primary/5">
                 <CardHeader>
-                    <CardTitle className="text-xl">App Configuration</CardTitle>
-                    <CardDescription>Global settings for the application branding and access control.</CardDescription>
+                    <CardTitle className="text-xl">Configuração do Aplicativo</CardTitle>
+                    <CardDescription>Configurações globais para a identidade visual e controle de acesso da aplicação.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label>Application Name</Label>
+                            <Label>Nome do Aplicativo</Label>
                             <input
                                 className={inputClass}
                                 placeholder="WA-AKG"
@@ -120,11 +120,11 @@ export default function SettingsPage() {
                                 onChange={(e) => setSystemConfig(prev => ({ ...prev, appName: e.target.value }))}
                                 disabled={!isSuperAdmin}
                             />
-                            <p className="text-xs text-muted-foreground">Changes the name in the sidebar and browser title.</p>
+                            <p className="text-xs text-muted-foreground">Altera o nome exibido na barra lateral e no título do navegador.</p>
                         </div>
 
                         <div className="grid gap-2">
-                            <Label>Timezone</Label>
+                            <Label>Fuso Horário</Label>
                             <select
                                 className={inputClass}
                                 value={systemConfig.timezone}
@@ -137,24 +137,24 @@ export default function SettingsPage() {
                                     </option>
                                 ))}
                             </select>
-                            <p className="text-xs text-muted-foreground">Scheduler will use this timezone.</p>
+                            <p className="text-xs text-muted-foreground">O agendador usará este fuso horário.</p>
                         </div>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="grid gap-2">
-                            <Label>Logo URL</Label>
+                            <Label>URL do Logo</Label>
                             <input
                                 className={inputClass}
-                                placeholder="https://example.com/logo.png"
+                                placeholder="https://exemplo.com/logo.png"
                                 value={systemConfig.logoUrl}
                                 onChange={(e) => setSystemConfig(prev => ({ ...prev, logoUrl: e.target.value }))}
                                 disabled={!isSuperAdmin}
                             />
-                            <p className="text-xs text-muted-foreground">URL for the main dashboard logo.</p>
+                            <p className="text-xs text-muted-foreground">URL para o logo principal do painel.</p>
                         </div>
                         <div className="grid gap-2">
-                            <Label>Favicon URL</Label>
+                            <Label>URL do Favicon</Label>
                             <input
                                 className={inputClass}
                                 placeholder="/favicon.ico"
@@ -162,14 +162,14 @@ export default function SettingsPage() {
                                 onChange={(e) => setSystemConfig(prev => ({ ...prev, faviconUrl: e.target.value }))}
                                 disabled={!isSuperAdmin}
                             />
-                            <p className="text-xs text-muted-foreground">URL for the browser tab icon.</p>
+                            <p className="text-xs text-muted-foreground">URL para o ícone da aba do navegador.</p>
                         </div>
                     </div>
 
                     <div className="flex items-center justify-between space-x-2 pt-2 border-t border-border/50">
                         <Label htmlFor="enable-registration" className="flex flex-col space-y-1">
-                            <span>Enable User Registration</span>
-                            <span className="font-normal text-xs text-muted-foreground">Allow new users to sign up for accounts. Turn off to keep the platform private.</span>
+                            <span>Habilitar Cadastro de Usuários</span>
+                            <span className="font-normal text-xs text-muted-foreground">Permite que novos usuários criem contas. Desative para manter a plataforma privada.</span>
                         </Label>
                         <Switch
                             id="enable-registration"
@@ -182,7 +182,7 @@ export default function SettingsPage() {
                     <div className="pt-2">
                         <Button onClick={handleSaveSystem} disabled={systemLoading || !isSuperAdmin}>
                             {systemLoading ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                            Save Configuration
+                            Salvar Configuração
                         </Button>
                     </div>
                 </CardContent>
@@ -191,8 +191,8 @@ export default function SettingsPage() {
             {/* System Updates */}
             <Card>
                 <CardHeader>
-                    <CardTitle>System Updates</CardTitle>
-                    <CardDescription>Check for the latest version from GitHub.</CardDescription>
+                    <CardTitle>Atualizações do Sistema</CardTitle>
+                    <CardDescription>Verifique a versão mais recente no GitHub.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button
@@ -204,12 +204,12 @@ export default function SettingsPage() {
                                 const res = await fetch("/api/system/check-updates", { method: "POST" });
                                 const data = await res.json();
                                 if (data.status) {
-                                    toast.success(data.message || "Check complete!");
+                                    toast.success(data.message || "Verificação concluída!");
                                 } else {
-                                    toast.error(data.message || "Failed to check updates");
+                                    toast.error(data.message || "Falha ao verificar atualizações");
                                 }
                             } catch (e) {
-                                toast.error("Error checking updates");
+                                toast.error("Erro ao verificar atualizações");
                             } finally {
                                 setSystemLoading(false);
                             }
@@ -217,7 +217,7 @@ export default function SettingsPage() {
                         disabled={systemLoading}
                     >
                         <RefreshCw className={`mr-2 h-4 w-4 ${systemLoading ? 'animate-spin' : ''}`} />
-                        Check for Updates
+                        Verificar Atualizações
                     </Button>
                 </CardContent>
             </Card>

@@ -12,7 +12,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased flex items-center justify-center p-4 sm:p-6 md:p-8" suppressHydrationWarning>
         <div className="w-full max-w-lg bg-background/50 backdrop-blur-3xl border border-destructive/20 shadow-2xl shadow-destructive/5 rounded-3xl p-8 sm:p-12 flex flex-col items-center relative overflow-hidden" suppressHydrationWarning>
           {/* Glow Effect behind the card content */}
@@ -26,13 +26,13 @@ export default function GlobalError({
           {/* Text Content */}
           <div className="relative text-center mb-10 w-full" suppressHydrationWarning>
             <h1 className="text-5xl font-black tracking-tight text-destructive mb-3 drop-shadow-sm" suppressHydrationWarning>
-              Fatal Error
+              Erro Fatal
             </h1>
             <h2 className="text-xl font-bold text-foreground mb-4" suppressHydrationWarning>
-              Sistem Mengalami Kendala Kritis
+              O Sistema Encontrou um Erro Crítico
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto" suppressHydrationWarning>
-              Aplikasi mengalami kesalahan pada konfigurasi dasar. Silakan muat ulang sistem.
+              O aplicativo encontrou um erro na configuração básica. Por favor, recarregue o sistema.
             </p>
           </div>
 
@@ -43,7 +43,7 @@ export default function GlobalError({
               className="w-full flex-1 flex items-center justify-center gap-2 h-12 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-medium rounded-xl transition-all shadow-lg shadow-destructive/20 active:scale-95 duration-150"
             >
               <RotateCcw className="size-4" />
-              <span>Muat Ulang Aplikasi</span>
+              <span>Recarregar Aplicativo</span>
             </button>
           </div>
 

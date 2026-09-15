@@ -45,7 +45,7 @@ export function Navbar({ appName }: NavbarProps) {
                 setUnreadCount(items.filter((n: Notification) => !n.read).length);
             }
         } catch (e) {
-            console.error("Failed to fetch notifications");
+            console.error("Falha ao buscar notificações");
         }
     };
 
@@ -76,7 +76,7 @@ export function Navbar({ appName }: NavbarProps) {
                 toast.info(notification.title, {
                     description: notification.message,
                     action: notification.href ? {
-                        label: "View",
+                        label: "Ver",
                         onClick: () => router.push(notification.href!)
                     } : undefined,
                 });
@@ -108,7 +108,7 @@ export function Navbar({ appName }: NavbarProps) {
                 }
             }
         } catch (e) {
-            console.error("Failed to mark read");
+            console.error("Falha ao marcar como lida");
         }
     };
 
@@ -123,11 +123,11 @@ export function Navbar({ appName }: NavbarProps) {
                     const notification = notifications.find(n => n.id === id);
                     return notification && !notification.read ? Math.max(0, prev - 1) : prev;
                 });
-                toast.success("Notification deleted");
+                toast.success("Notificação excluída");
             }
         } catch (e) {
-            console.error("Failed to delete notification");
-            toast.error("Failed to delete notification");
+            console.error("Falha ao excluir notificação");
+            toast.error("Falha ao excluir notificação");
         }
     };
 
@@ -160,18 +160,18 @@ export function Navbar({ appName }: NavbarProps) {
                     <PopoverContent className="w-80 p-0 rounded-2xl border border-border/50 shadow-2xl glass-panel" align="end">
                         <div className="p-4 border-b border-border/50 flex justify-between items-center bg-background/50">
                             <div>
-                                <h4 className="font-semibold leading-none text-foreground">Notifications</h4>
+                                <h4 className="font-semibold leading-none text-foreground">Notificações</h4>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                    {unreadCount > 0 ? `You have ${unreadCount} unread updates.` : "No new notifications."}
+                                    {unreadCount > 0 ? `Você tem ${unreadCount} atualizações não lidas.` : "Nenhuma notificação nova."}
                                 </p>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Button variant="ghost" size="sm" className="h-auto py-1 px-2 text-xs" onClick={() => { router.push("/dashboard/inbox"); setIsOpen(false); }}>
-                                    See all
+                                    Ver todas
                                 </Button>
                                 {unreadCount > 0 && (
                                     <Button variant="ghost" size="sm" onClick={() => markAsRead()} className="h-auto py-1 px-2 text-xs">
-                                        Mark all read
+                                        Marcar todas como lidas
                                     </Button>
                                 )}
                             </div>
@@ -182,8 +182,8 @@ export function Navbar({ appName }: NavbarProps) {
                                     <div className="bg-slate-100 p-3 rounded-full mb-3">
                                         <Inbox className="h-6 w-6 text-slate-400" />
                                     </div>
-                                    <p className="text-sm font-medium">No new notifications</p>
-                                    <p className="text-xs text-muted-foreground max-w-[180px]">We'll notify you when something important arrives.</p>
+                                    <p className="text-sm font-medium">Nenhuma notificação nova</p>
+                                    <p className="text-xs text-muted-foreground max-w-[180px]">Avisaremos você quando algo importante chegar.</p>
                                 </div>
                             ) : (
                                 <div className="divide-y">

@@ -15,17 +15,17 @@ export async function getChatsStatus(
     search?: string
 ) {
     const user = await getAuthenticatedUserForAction();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error("Não autorizado");
 
     const canAccess = await canAccessSession(user.id, user.role, sessionId);
-    if (!canAccess) throw new Error("Forbidden");
+    if (!canAccess) throw new Error("Acesso negado");
 
     const session = await prisma.session.findUnique({
         where: { sessionId },
         select: { id: true }
     });
 
-    if (!session) throw new Error("Session not found");
+    if (!session) throw new Error("Sessão não encontrada");
 
     return await ChatService.getChatsList(session.id, limit, before, search);
 }
@@ -38,17 +38,17 @@ export async function getChatMessages(
     before?: string
 ) {
     const user = await getAuthenticatedUserForAction();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error("Não autorizado");
 
     const canAccess = await canAccessSession(user.id, user.role, sessionId);
-    if (!canAccess) throw new Error("Forbidden");
+    if (!canAccess) throw new Error("Acesso negado");
 
     const session = await prisma.session.findUnique({
         where: { sessionId },
         select: { id: true }
     });
 
-    if (!session) throw new Error("Session not found");
+    if (!session) throw new Error("Sessão não encontrada");
 
     const { messages, hasMore } = await ChatService.getMessages(session.id, jid, limit, before);
 
@@ -66,23 +66,23 @@ export async function getChatMessages(
 // Send a basic text message
 export async function sendChatMessage(sessionId: string, jid: string, text: string, quotedMessageId?: string) {
     const user = await getAuthenticatedUserForAction();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error("Não autorizado");
 
     const canAccess = await canAccessSession(user.id, user.role, sessionId);
-    if (!canAccess) throw new Error("Forbidden");
+    if (!canAccess) throw new Error("Acesso negado");
 
     try {
         await ChatService.sendTextMessage(sessionId, jid, { text }, undefined, quotedMessageId);
         return { success: true };
     } catch (error: any) {
-        throw new Error(`Failed to send message: ${error.message}`);
+        throw new Error(`Falha ao enviar mensagem: ${error.message}`);
     }
 }
 
 // Upload and Send Media
 export async function sendMediaMessage(formData: FormData) {
     const user = await getAuthenticatedUserForAction();
-    if (!user) throw new Error("Unauthorized");
+    if (!user) throw new Error("Não autorizado");
 
     const sessionId = formData.get("sessionId") as string;
     const jid = formData.get("jid") as string;
@@ -91,11 +91,11 @@ export async function sendMediaMessage(formData: FormData) {
     const caption = formData.get("caption") as string || "";
 
     if (!sessionId || !jid || !file || !type) {
-        throw new Error("Missing required fields");
+        throw new Error("Campos obrigatórios ausentes");
     }
 
     const canAccess = await canAccessSession(user.id, user.role, sessionId);
-    if (!canAccess) throw new Error("Forbidden");
+    if (!canAccess) throw new Error("Acesso negado");
 
     try {
         const buffer = Buffer.from(await file.arrayBuffer());
@@ -113,6 +113,6 @@ export async function sendMediaMessage(formData: FormData) {
         return { success: true };
     } catch (error: any) {
         console.error("Media send error:", error);
-        throw new Error(`Failed to send media: ${error.message}`);
+        throw new Error(`Falha ao enviar mídia: ${error.message}`);
     }
 }

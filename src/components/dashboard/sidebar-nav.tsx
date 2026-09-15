@@ -55,52 +55,52 @@ const navGroups: NavGroup[] = [
     {
         label: "Main",
         items: [
-            { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/dashboard/sessions", label: "Sessions / QR", icon: QrCode },
+            { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
+            { href: "/dashboard/sessions", label: "Sessões / QR", icon: QrCode },
         ],
     },
     {
-        label: "Messaging",
+        label: "Mensagens",
         items: [
             { href: "/dashboard/chat", label: "Chat", icon: MessageSquare },
-            { href: "/dashboard/broadcast", label: "Broadcast", icon: Megaphone },
-            { href: "/dashboard/sticker", label: "Sticker Maker", icon: ImageIcon },
+            { href: "/dashboard/broadcast", label: "Transmissão", icon: Megaphone },
+            { href: "/dashboard/sticker", label: "Criador de Figurinhas", icon: ImageIcon },
         ],
     },
     {
-        label: "Contacts",
+        label: "Contatos",
         items: [
-            { href: "/dashboard/contacts", label: "Contacts", icon: UserCheck },
-            { href: "/dashboard/groups", label: "Groups", icon: Users },
-            { href: "/dashboard/labels", label: "Labels", icon: Tag },
+            { href: "/dashboard/contacts", label: "Contatos", icon: UserCheck },
+            { href: "/dashboard/groups", label: "Grupos", icon: Users },
+            { href: "/dashboard/labels", label: "Etiquetas", icon: Tag },
         ],
     },
     {
-        label: "Automation",
+        label: "Automação",
         items: [
-            { href: "/dashboard/bot-settings", label: "Bot Settings", icon: Bot },
-            { href: "/dashboard/autoreply", label: "Auto Reply", icon: MessageCircleReply },
-            { href: "/dashboard/profile", label: "Bot Profile", icon: UserCircle },
-            { href: "/dashboard/scheduler", label: "Scheduler", icon: CalendarClock },
-            { href: "/dashboard/webhooks", label: "Webhooks & API", icon: Webhook },
+            { href: "/dashboard/bot-settings", label: "Configurações do Bot", icon: Bot },
+            { href: "/dashboard/autoreply", label: "Resposta Automática", icon: MessageCircleReply },
+            { href: "/dashboard/profile", label: "Perfil do Bot", icon: UserCircle },
+            { href: "/dashboard/scheduler", label: "Agendador", icon: CalendarClock },
+            { href: "/dashboard/webhooks", label: "Webhooks e API", icon: Webhook },
         ],
     },
     {
-        label: "Developer",
+        label: "Desenvolvedor",
         items: [
-            { href: "/docs", label: "API Docs", icon: FileText },
+            { href: "/docs", label: "Documentação da API", icon: FileText },
             { href: "/swagger", label: "Swagger UI", icon: Code, external: true },
         ],
     },
     {
-        label: "Administration",
+        label: "Administração",
         items: [
-            { href: "/dashboard/media", label: "Media Manager", icon: HardDrive },
-            { href: "/dashboard/sessions/access", label: "Session Access", icon: UserPlus },
-            { href: "/dashboard/users", label: "Users", icon: Users, superadminOnly: true },
-            { href: "/dashboard/settings", label: "Settings", icon: Settings },
-            { href: "/dashboard/system-monitor", label: "System Monitor", icon: Activity, superadminOnly: true },
-            { href: "/dashboard/notifications", label: "Notifications", icon: Bell, superadminOnly: true },
+            { href: "/dashboard/media", label: "Gerenciador de Mídia", icon: HardDrive },
+            { href: "/dashboard/sessions/access", label: "Acesso a Sessões", icon: UserPlus },
+            { href: "/dashboard/users", label: "Usuários", icon: Users, superadminOnly: true },
+            { href: "/dashboard/settings", label: "Configurações", icon: Settings },
+            { href: "/dashboard/system-monitor", label: "Monitor do Sistema", icon: Activity, superadminOnly: true },
+            { href: "/dashboard/notifications", label: "Notificações", icon: Bell, superadminOnly: true },
         ],
     },
 ];
@@ -202,7 +202,7 @@ export function SidebarNav() {
                     ) : (
                         <>
                             <PanelLeftClose size={16} />
-                            <span>Collapse</span>
+                            <span>Recolher</span>
                         </>
                     )}
                 </button>

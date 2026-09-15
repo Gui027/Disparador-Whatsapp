@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_DESCRIPTION = "Self-hosted WhatsApp Gateway with Multi-device support, Auto-replies, API integration, and session management dashboard.";
+const APP_DESCRIPTION = "Gateway WhatsApp auto-hospedado com suporte a múltiplos dispositivos, respostas automáticas, integração via API e painel de gerenciamento de sessões.";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://wa-akg.app";
 
 export const viewport: Viewport = {
@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error("Failed to fetch system config for metadata:", e);
   }
 
-  const appDefaultTitle = `${appName} | Premium WhatsApp Gateway`;
+  const appDefaultTitle = `${appName} | Gateway WhatsApp Premium`;
 
   return {
     metadataBase: new URL(APP_URL),
@@ -71,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
-      locale: "en_US",
+      locale: "pt_BR",
       siteName: appName,
       title: appDefaultTitle,
       description: APP_DESCRIPTION,
@@ -99,7 +99,7 @@ export default function RootLayout({
   const allowIndexing = process.env.NEXT_PUBLIC_ALLOW_INDEXING === "true";
 
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+    <html lang="pt-BR" suppressHydrationWarning className="scroll-smooth">
       <head>
         {/* Conditional robots meta (noindex for staging/dev) */}
         {!allowIndexing && <meta name="robots" content="noindex, nofollow" />}

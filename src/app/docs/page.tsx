@@ -6,17 +6,17 @@ import Link from 'next/link';
 import { DocsClient } from './docs-client';
 
 export const metadata = {
-    title: 'API Documentation - WA-AKG',
-    description: 'Complete API reference for WA-AKG WhatsApp Gateway. Includes endpoints for messaging, groups, contacts, media, and webhooks.',
+    title: 'Documentação da API - WA-AKG',
+    description: 'Referência completa da API do WA-AKG WhatsApp Gateway. Inclui endpoints para mensagens, grupos, contatos, mídia e webhooks.',
     openGraph: {
-        title: 'API Documentation - WA-AKG',
-        description: 'Complete API reference for WA-AKG WhatsApp Gateway.',
+        title: 'Documentação da API - WA-AKG',
+        description: 'Referência completa da API do WA-AKG WhatsApp Gateway.',
         type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'API Documentation - WA-AKG',
-        description: 'Complete API reference for WA-AKG WhatsApp Gateway.',
+        title: 'Documentação da API - WA-AKG',
+        description: 'Referência completa da API do WA-AKG WhatsApp Gateway.',
     },
 };
 
@@ -45,8 +45,8 @@ export default async function PublicDocsPage() {
         const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
         version = `v${packageJson.version}`;
     } catch (err) {
-        content = '# Error\n\nCould not load documentation file.';
-        console.error("Error loading docs:", err);
+        content = '# Erro\n\nNão foi possível carregar o arquivo de documentação.';
+        console.error("Erro ao carregar a documentação:", err);
     }
 
     // Nested TOC Generation
@@ -106,7 +106,7 @@ export default async function PublicDocsPage() {
                             href="/dashboard"
                             className="text-sm font-medium px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md hover:shadow-lg"
                         >
-                            Dashboard
+                            Painel
                         </Link>
                     </div>
                 </div>

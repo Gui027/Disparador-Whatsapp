@@ -2,17 +2,17 @@ import Link from "next/link";
 import { ArrowLeft, Lock, Shield } from "lucide-react";
 
 export const metadata = {
-    title: "Privacy Policy | WA-AKG",
-    description: "Privacy Policy for WA-AKG self-hosted WhatsApp Gateway. Zero-tracking architecture, data ownership, and security practices.",
+    title: "Política de Privacidade | WA-AKG",
+    description: "Política de Privacidade do Gateway WhatsApp auto-hospedado WA-AKG. Arquitetura sem rastreamento, propriedade dos dados e práticas de segurança.",
     openGraph: {
-        title: "Privacy Policy | WA-AKG",
-        description: "Privacy Policy for WA-AKG self-hosted WhatsApp Gateway.",
+        title: "Política de Privacidade | WA-AKG",
+        description: "Política de Privacidade do Gateway WhatsApp auto-hospedado WA-AKG.",
         type: "website",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Privacy Policy | WA-AKG",
-        description: "Privacy Policy for WA-AKG self-hosted WhatsApp Gateway.",
+        title: "Política de Privacidade | WA-AKG",
+        description: "Política de Privacidade do Gateway WhatsApp auto-hospedado WA-AKG.",
     },
 };
 
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
                 <Link href="/" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground mb-8 transition-colors group">
                     <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                    Back to Home
+                    Voltar para o Início
                 </Link>
 
                 <div className="glass-panel p-8 md:p-12 rounded-3xl shadow-xl shadow-black/5 dark:shadow-black/20 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -36,57 +36,57 @@ export default function PrivacyPage() {
                             <Shield className="h-8 w-8 text-blue-500" />
                         </div>
                         <div>
-                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Privacy Policy</h1>
-                            <p className="text-muted-foreground mt-2">Effective Date: {new Date().toLocaleDateString()}</p>
+                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Política de Privacidade</h1>
+                            <p className="text-muted-foreground mt-2">Data de vigência: {new Date().toLocaleDateString()}</p>
                         </div>
                     </div>
 
                     <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary hover:prose-a:text-primary/80 prose-p:leading-relaxed">
 
                         <p className="lead text-lg text-muted-foreground mb-8">
-                            At WA-AKG, we believe that your data is your property. This Privacy Policy details the strict boundaries regarding how information is handled when using our open-source, self-hosted WhatsApp Gateway.
+                            No WA-AKG, acreditamos que seus dados são sua propriedade. Esta Política de Privacidade detalha os limites estritos sobre como as informações são tratadas ao usar nosso Gateway WhatsApp open-source e auto-hospedado.
                         </p>
 
                         <h2 className="flex items-center gap-2 mt-8 text-2xl border-b pb-2">
                             <Lock className="h-6 w-6 text-blue-500" />
-                            1. Zero-Tracking Architecture
+                            1. Arquitetura Sem Rastreamento
                         </h2>
                         <p>
-                            Because WA-AKG is designed to be <strong>self-hosted</strong>, all core data processing occurs exclusively on the hardware where you deploy the application.
+                            Como o WA-AKG foi projetado para ser <strong>auto-hospedado</strong>, todo o processamento principal de dados ocorre exclusivamente no hardware onde você implanta a aplicação.
                         </p>
                         <ul>
-                            <li><strong>No Centralized Telemetry:</strong> The creators of WA-AKG do not receive telemetry, analytics, or usage reports about your WhatsApp interactions.</li>
-                            <li><strong>Absolute Data Ownership:</strong> Your contacts, messages, schedules, and auto-replies remain in your own database. We cannot and will not access it.</li>
+                            <li><strong>Sem Telemetria Centralizada:</strong> Os criadores do WA-AKG não recebem telemetria, análises ou relatórios de uso sobre suas interações no WhatsApp.</li>
+                            <li><strong>Propriedade Absoluta dos Dados:</strong> Seus contatos, mensagens, agendamentos e respostas automáticas permanecem no seu próprio banco de dados. Não podemos e não iremos acessá-los.</li>
                         </ul>
 
-                        <h2 className="mt-8 text-2xl border-b pb-2">2. Data We Process Locally</h2>
+                        <h2 className="mt-8 text-2xl border-b pb-2">2. Dados Que Processamos Localmente</h2>
                         <p>
-                            When you deploy the gateway, the application running on your server interacts with:
+                            Ao implantar o gateway, a aplicação em execução no seu servidor interage com:
                         </p>
                         <ul>
-                            <li><strong>Authentication Credentials:</strong> Passwords you create for the dashboard are securely hashed using bcrypt before being stored in your local database.</li>
-                            <li><strong>WhatsApp Sessions:</strong> WA-AKG acts as a bridge to WhatsApp Web. The session tokens (keys) necessary to maintain this connection are stored locally on your server.</li>
-                            <li><strong>Communication Logs:</strong> Messages sent and received via the gateway are logged within your local database to provide you with historical data and webhook functionality.</li>
+                            <li><strong>Credenciais de Autenticação:</strong> As senhas que você cria para o painel são criptografadas com segurança usando bcrypt antes de serem armazenadas no seu banco de dados local.</li>
+                            <li><strong>Sessões do WhatsApp:</strong> O WA-AKG atua como uma ponte para o WhatsApp Web. Os tokens de sessão (chaves) necessários para manter essa conexão são armazenados localmente no seu servidor.</li>
+                            <li><strong>Registros de Comunicação:</strong> Mensagens enviadas e recebidas por meio do gateway são registradas no seu banco de dados local para fornecer dados históricos e funcionalidade de webhook.</li>
                         </ul>
 
-                        <h2 className="mt-8 text-2xl border-b pb-2">3. Protecting Your Information</h2>
+                        <h2 className="mt-8 text-2xl border-b pb-2">3. Protegendo Suas Informações</h2>
                         <p>
-                            While WA-AKG is built with modern security practices, the ultimate safety of your data depends on your hosting environment. We strongly recommend:
+                            Embora o WA-AKG seja construído com práticas modernas de segurança, a segurança final dos seus dados depende do seu ambiente de hospedagem. Recomendamos fortemente:
                         </p>
                         <ul>
-                            <li>Deploying the application behind a reverse proxy with enforced <strong>SSL/TLS encryption</strong> (HTTPS).</li>
-                            <li>Securing the host server with firewalls and SSH key authentication.</li>
-                            <li>Keeping the underlying operating system and Node.js environment constantly updated.</li>
+                            <li>Implantar a aplicação atrás de um proxy reverso com <strong>criptografia SSL/TLS</strong> obrigatória (HTTPS).</li>
+                            <li>Proteger o servidor host com firewalls e autenticação por chave SSH.</li>
+                            <li>Manter o sistema operacional subjacente e o ambiente Node.js sempre atualizados.</li>
                         </ul>
 
-                        <h2 className="mt-8 text-2xl border-b pb-2">4. Third-Party Integrations</h2>
+                        <h2 className="mt-8 text-2xl border-b pb-2">4. Integrações com Terceiros</h2>
                         <p>
-                            WA-AKG utilizes the <code>@whiskeysockets/baileys</code> library to communicate directly with WhatsApp's servers. By using this gateway, your server will establish a direct web-socket connection to WhatsApp. Please be aware that your use of WhatsApp is still subject to Meta's Privacy Policy.
+                            O WA-AKG utiliza a biblioteca <code>@whiskeysockets/baileys</code> para se comunicar diretamente com os servidores do WhatsApp. Ao usar este gateway, seu servidor estabelecerá uma conexão web-socket direta com o WhatsApp. Esteja ciente de que o uso do WhatsApp ainda está sujeito à Política de Privacidade da Meta.
                         </p>
 
                         <div className="mt-12 p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10">
-                            <p className="font-semibold mb-2">Need Further Details?</p>
-                            <p className="text-sm text-muted-foreground mb-0">If you have specific questions about data handling or wish to audit the code, please visit our <Link href="https://github.com/mrifqidaffaaditya/WA-AKG">GitHub Repository</Link>.</p>
+                            <p className="font-semibold mb-2">Precisa de mais detalhes?</p>
+                            <p className="text-sm text-muted-foreground mb-0">Se você tiver dúvidas específicas sobre o tratamento de dados ou desejar auditar o código, visite nosso <Link href="https://github.com/mrifqidaffaaditya/WA-AKG">Repositório no GitHub</Link>.</p>
                         </div>
                     </div>
                 </div>
