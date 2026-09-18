@@ -11,6 +11,20 @@ const broadcastBodySchema = z.object({
     delay: z.number().optional()
 });
 
+const NOT_ON_WHATSAPP = "Número não encontrado no WhatsApp";
+const MAX_ATTEMPTS = 3;
+const SOCKET_WAIT_MS = 45000;
+const SOCKET_POLL_INTERVAL_MS = 1500;
+
+// Espera a sessão reconectar caso o socket tenha caído momentaneamente (reconexão automática do Baileys)
+async function waitForSocket(instance: { socket: any }, maxWaitMs: number) {
+    const deadline = Date.now() + maxWaitMs;
+    while (!instance.socket && Date.now() < deadline) {
+        await new Promise(r => setTimeout(r, SOCKET_POLL_INTERVAL_MS));
+    }
+    return instance.socket;
+}
+
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ sessionId: string }> }
@@ -41,19 +55,31 @@ export async function POST(
             return NextResponse.json({ status: false, message: "Session not ready", error: "Session not ready" }, { status: 503 });
         }
 
+        // Evita reenviar para quem já recebeu mensagem com sucesso em uma transmissão anterior nesta sessão
+        const alreadySentRows = await prisma.broadcastRecipient.findMany({
+            where: { status: "sent", broadcastLog: { sessionId }, jid: { in: recipients } },
+            select: { jid: true },
+            distinct: ["jid"]
+        });
+        const alreadySentSet = new Set(alreadySentRows.map(r => r.jid));
+
+        const pendingRecipients = recipients.filter(jid => !alreadySentSet.has(jid));
+        const skippedRecipients = recipients.filter(jid => alreadySentSet.has(jid));
+
         // --- Save BroadcastLog & recipients to DB ---
         const log = await prisma.broadcastLog.create({
             data: {
                 sessionId,
                 message,
                 total: recipients.length,
+                skipped: skippedRecipients.length,
                 delay: delay || 2000,
                 status: "running",
                 recipients: {
-                    create: recipients.map(jid => ({
-                        jid,
-                        status: "pending"
-                    }))
+                    create: [
+                        ...pendingRecipients.map(jid => ({ jid, status: "pending" })),
+                        ...skippedRecipients.map(jid => ({ jid, status: "skipped", error: "Já recebeu essa mensagem em uma transmissão anterior" }))
+                    ]
                 }
             },
             include: { recipients: true }
@@ -62,6 +88,7 @@ export async function POST(
         const messageContent: AnyMessageContent = { text: message };
         const io = (global as any).io;
         const broadcastId = log.id;
+        const skipped = skippedRecipients.length;
 
         // Emit initial state
         if (io) {
@@ -71,8 +98,9 @@ export async function POST(
                 total: recipients.length,
                 sent: 0,
                 failed: 0,
+                skipped,
                 current: null,
-                progress: 0,
+                progress: skipped > 0 ? Math.round((skipped / recipients.length) * 100) : 0,
                 startedAt: log.startedAt.toISOString()
             });
         }
@@ -83,30 +111,56 @@ export async function POST(
             let failed = 0;
             const errors: { jid: string; error: string }[] = [];
 
-            for (let i = 0; i < recipients.length; i++) {
-                const jid = recipients[i];
-                try {
-                    await instance.socket!.sendMessage(jid, messageContent);
-                    sent++;
+            for (let i = 0; i < pendingRecipients.length; i++) {
+                const jid = pendingRecipients[i];
+                let lastError = "Unknown error";
+                let succeeded = false;
 
-                    // Update recipient status in DB
+                for (let attempt = 1; attempt <= MAX_ATTEMPTS && !succeeded; attempt++) {
+                    try {
+                        let sock = instance.socket;
+                        if (!sock) {
+                            sock = await waitForSocket(instance, SOCKET_WAIT_MS);
+                        }
+                        if (!sock) {
+                            throw new Error("Sessão do WhatsApp desconectada — não foi possível reconectar a tempo");
+                        }
+
+                        const checkResult = await sock.onWhatsApp(jid);
+                        const result = Array.isArray(checkResult) && checkResult.length > 0 ? checkResult[0] : null;
+
+                        if (!result?.exists) {
+                            lastError = NOT_ON_WHATSAPP;
+                            break; // não adianta tentar de novo — número realmente não existe
+                        }
+
+                        await sock.sendMessage(result.jid, messageContent);
+                        succeeded = true;
+                    } catch (e: any) {
+                        lastError = e.message || "Unknown error";
+                        console.error(`Broadcast attempt ${attempt}/${MAX_ATTEMPTS} failed for ${jid}`, e);
+                        if (attempt < MAX_ATTEMPTS) {
+                            await new Promise(r => setTimeout(r, 2000 * attempt));
+                        }
+                    }
+                }
+
+                if (succeeded) {
+                    sent++;
                     await prisma.broadcastRecipient.updateMany({
                         where: { broadcastLogId: broadcastId, jid },
                         data: { status: "sent", sentAt: new Date() }
                     });
-                } catch (e: any) {
+                } else {
                     failed++;
-                    errors.push({ jid, error: e.message || "Unknown error" });
-                    console.error(`Failed to send broadcast to ${jid}`, e);
-
-                    // Update recipient error in DB
+                    errors.push({ jid, error: lastError });
                     await prisma.broadcastRecipient.updateMany({
                         where: { broadcastLogId: broadcastId, jid },
-                        data: { status: "failed", error: e.message || "Unknown error" }
+                        data: { status: "failed", error: lastError }
                     });
                 }
 
-                const progress = Math.round(((sent + failed) / recipients.length) * 100);
+                const progress = Math.round(((sent + failed + skipped) / recipients.length) * 100);
 
                 // Update BroadcastLog progress in DB
                 await prisma.broadcastLog.update({
@@ -122,13 +176,14 @@ export async function POST(
                         total: recipients.length,
                         sent,
                         failed,
+                        skipped,
                         current: jid,
                         progress
                     });
                 }
 
                 // Delay between sends
-                if (i < recipients.length - 1) {
+                if (i < pendingRecipients.length - 1) {
                     const baseDelay = delay || 2000;
                     const randomDelay = baseDelay + Math.floor(Math.random() * (baseDelay * 0.5));
                     await new Promise(r => setTimeout(r, randomDelay));
@@ -149,18 +204,19 @@ export async function POST(
                     total: recipients.length,
                     sent,
                     failed,
+                    skipped,
                     errors,
                     progress: 100,
                     completedAt: new Date().toISOString()
                 });
             }
-            console.log(`Broadcast ${broadcastId} completed: ${sent} sent, ${failed} failed out of ${recipients.length}`);
+            console.log(`Broadcast ${broadcastId} completed: ${sent} sent, ${failed} failed, ${skipped} skipped (already sent) out of ${recipients.length}`);
         })();
 
         return NextResponse.json({
             status: true,
             message: "Broadcast started",
-            data: { broadcastId: log.id, total: recipients.length }
+            data: { broadcastId: log.id, total: recipients.length, skipped }
         });
 
     } catch (e) {

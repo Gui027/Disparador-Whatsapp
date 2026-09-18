@@ -20,6 +20,7 @@ interface BroadcastProgress {
     total: number;
     sent: number;
     failed: number;
+    skipped?: number;
     current?: string | null;
     progress?: number;
     errors?: { jid: string; error: string }[];
@@ -34,6 +35,7 @@ interface BroadcastLog {
     total: number;
     sent: number;
     failed: number;
+    skipped?: number;
     status: string;
     delay: number;
     startedAt: string;
@@ -83,10 +85,11 @@ export default function BroadcastPage() {
                 setLoading(false);
                 // Atualiza o histórico após a conclusão
                 fetchHistory();
+                const skippedSuffix = data.skipped ? `, ${data.skipped} já haviam recebido antes` : "";
                 if (data.failed === 0) {
-                    toast.success(`Transmissão concluída! ${data.sent} enviadas.`);
+                    toast.success(`Transmissão concluída! ${data.sent} enviadas${skippedSuffix}.`);
                 } else {
-                    toast.warning(`Transmissão concluída. ${data.sent} enviadas, ${data.failed} falharam.`);
+                    toast.warning(`Transmissão concluída. ${data.sent} enviadas, ${data.failed} falharam${skippedSuffix}.`);
                 }
             }
         };
@@ -145,9 +148,10 @@ export default function BroadcastPage() {
 
         try {
             const recipients = contacts.split(/[\n,]+/).map(s => s.trim()).filter(Boolean).map(s => {
-                if (!s.includes('@')) return `${s}@s.whatsapp.net`;
-                return s;
-            });
+                if (s.includes('@')) return s;
+                const digits = s.replace(/\D/g, '');
+                return `${digits}@s.whatsapp.net`;
+            }).filter(jid => jid !== '@s.whatsapp.net');
 
             if (recipients.length === 0) {
                 toast.error("Nenhum destinatário especificado");
@@ -168,7 +172,12 @@ export default function BroadcastPage() {
             const data = await res.json();
 
             if (res.ok) {
-                toast.info(`Transmissão iniciada para ${recipients.length} destinatários...`);
+                const skipped = data.data?.skipped || 0;
+                toast.info(
+                    skipped > 0
+                        ? `Transmissão iniciada para ${recipients.length} destinatários (${skipped} já haviam recebido essa mensagem e serão ignorados)...`
+                        : `Transmissão iniciada para ${recipients.length} destinatários...`
+                );
             } else {
                 toast.error(data.message || "Falha ao iniciar a transmissão");
                 setLoading(false);
@@ -321,7 +330,7 @@ export default function BroadcastPage() {
                                         <Progress value={broadcastProgress.progress || 0} className="h-3" />
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                         <div className="bg-background rounded-lg p-3 text-center border">
                                             <div className="text-2xl font-bold text-green-600">{broadcastProgress.sent}</div>
                                             <div className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
@@ -335,8 +344,14 @@ export default function BroadcastPage() {
                                             </div>
                                         </div>
                                         <div className="bg-background rounded-lg p-3 text-center border">
+                                            <div className="text-2xl font-bold text-blue-500">{broadcastProgress.skipped || 0}</div>
+                                            <div className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
+                                                <History className="h-3 w-3" /> Já enviadas antes
+                                            </div>
+                                        </div>
+                                        <div className="bg-background rounded-lg p-3 text-center border">
                                             <div className="text-2xl font-bold text-muted-foreground">
-                                                {broadcastProgress.total - broadcastProgress.sent - broadcastProgress.failed}
+                                                {broadcastProgress.total - broadcastProgress.sent - broadcastProgress.failed - (broadcastProgress.skipped || 0)}
                                             </div>
                                             <div className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
                                                 <Clock className="h-3 w-3" /> Pendentes
@@ -456,7 +471,7 @@ export default function BroadcastPage() {
                         ) : selectedLog ? (
                             <div className="flex flex-col gap-4 overflow-hidden min-h-0">
                                 {/* Resumo */}
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     <div className="bg-muted/30 rounded-lg p-3 text-center">
                                         <div className="text-xl font-bold text-green-600">{selectedLog.sent}</div>
                                         <div className="text-xs text-muted-foreground">Enviadas</div>
@@ -464,6 +479,10 @@ export default function BroadcastPage() {
                                     <div className="bg-muted/30 rounded-lg p-3 text-center">
                                         <div className="text-xl font-bold text-red-500">{selectedLog.failed}</div>
                                         <div className="text-xs text-muted-foreground">Falharam</div>
+                                    </div>
+                                    <div className="bg-muted/30 rounded-lg p-3 text-center">
+                                        <div className="text-xl font-bold text-blue-500">{selectedLog.skipped || 0}</div>
+                                        <div className="text-xs text-muted-foreground">Já enviadas antes</div>
                                     </div>
                                     <div className="bg-muted/30 rounded-lg p-3 text-center">
                                         <div className="text-xl font-bold">{selectedLog.total}</div>
@@ -492,14 +511,16 @@ export default function BroadcastPage() {
                                                 <div key={r.id}
                                                     className={`flex items-center justify-between gap-2 text-xs py-1.5 px-2 rounded ${
                                                         r.status === "sent" ? "bg-green-500/5" :
-                                                        r.status === "failed" ? "bg-red-500/5" : "bg-muted/30"
+                                                        r.status === "failed" ? "bg-red-500/5" :
+                                                        r.status === "skipped" ? "bg-blue-500/5" : "bg-muted/30"
                                                     }`}
                                                 >
                                                     <span className="font-mono truncate">{formatJid(r.jid)}</span>
                                                     <div className="flex items-center gap-2 shrink-0">
                                                         <span className={`px-1.5 py-0.5 rounded font-medium ${
                                                             r.status === "sent" ? "text-green-600 bg-green-500/10" :
-                                                            r.status === "failed" ? "text-red-500 bg-red-500/10" : "text-muted-foreground bg-muted/50"
+                                                            r.status === "failed" ? "text-red-500 bg-red-500/10" :
+                                                            r.status === "skipped" ? "text-blue-500 bg-blue-500/10" : "text-muted-foreground bg-muted/50"
                                                         }`}>
                                                             {r.status}
                                                         </span>

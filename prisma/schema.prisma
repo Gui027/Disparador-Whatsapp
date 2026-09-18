@@ -367,6 +367,7 @@ model BroadcastLog {
   total       Int
   sent        Int                 @default(0)
   failed      Int                 @default(0)
+  skipped     Int                 @default(0) // already contacted in a previous broadcast to this session
   status      String              @default("running") // running, completed, cancelled
   delay       Int                 @default(2000)
   startedAt   DateTime            @default(now())
@@ -382,11 +383,12 @@ model BroadcastRecipient {
   id              String       @id @default(cuid())
   broadcastLogId  String
   jid             String
-  status          String       @default("pending") // pending, sent, failed
+  status          String       @default("pending") // pending, sent, failed, skipped
   error           String?      @db.Text
   sentAt          DateTime?
 
   broadcastLog    BroadcastLog @relation(fields: [broadcastLogId], references: [id], onDelete: Cascade)
 
   @@index([broadcastLogId])
+  @@index([jid])
 }
